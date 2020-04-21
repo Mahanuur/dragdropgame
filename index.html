@@ -19,12 +19,13 @@
 var score = 0,
   timerr = 0,
   flag = 0;
+  correct=0;
 
-var source =["pool2.jpg","golf2.jpg","cricket2.jpg","football2.jpg","snooker2.jpg","tennis2.jpg"];
+var source =["images/pool2.jpg","images/golf2.jpg","images/cricket2.jpg","images/football2.jpg","images/snooker2.jpg","images/tennis2.jpg"];
     
-var target = ["pool.jpg","golf.jpg","cricket.jpg","football.jpg","snooker.jpg","tennis.jpg"];
-var wow = new Audio("wow.mp3");
-
+var target = ["images/pool.jpg","images/golf.jpg","images/cricket.jpg","images/football.jpg","images/snooker.jpg","images/tennis.jpg"];
+var wow = new Audio("images/wow.mp3");
+var loss = new Audio("images/sad.mp3");
 
 $(document).ready(function () 
 {
@@ -74,6 +75,7 @@ $(document).ready(function ()
                       timerr--;
                       if(timerr==0)
                       {
+                        
                         clearInterval();
                         $("#scores").text("Score = "+score);
                         $(".timerr").text("Timer : "+timerr);
@@ -89,8 +91,6 @@ $(document).ready(function ()
                         $(".timerr").text("Timer : "+timerr);
                       }
                     }
-                      
-                      
                   }, 1000);
 
   });
@@ -104,7 +104,21 @@ $(document).ready(function ()
     $("<div ><img style='width:100%;height:100%;' src='" + value + "' /></div>")
       .appendTo(".sourceimg")
       .draggable({
-        revert: true,
+        revert:function (socketObj)
+                          {
+                            if(socketObj===false)
+                            {
+                              if(correct==1)
+                              {
+                                correct=0;
+                              }
+                              else
+                              {
+                                loss.play();
+                              }
+		                        }
+                            return true;
+                          },
         scope: sourceval.toLocaleLowerCase(),
       });
   });
@@ -121,8 +135,7 @@ $(document).ready(function ()
 
         drop: function (event, ui) 
         {
-            
-           
+           correct=1;
           $(ui.draggable).append($(this).text());
           check = 0;
           wow.play();
